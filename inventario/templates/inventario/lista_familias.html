@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Familias/Categorías</h2>
+<a href="{% url 'nueva_familia' %}" class="btn btn-primary mb-3">Nueva Familia</a>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for familia in familias %}
+        <tr>
+            <td>{{ familia.nombre }}</td>
+            <td>{{ familia.descripcion }}</td>
+            <td>
+                <a href="{% url 'editar_familia' familia.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'eliminar_familia' familia.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No hay familias registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

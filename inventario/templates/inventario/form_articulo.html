@@ -1,0 +1,166 @@
+
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white" style="background:linear-gradient(90deg,#0d6efd 60%,#2196f3 100%);">
+                <h3 class="mb-0">
+                    <i class="fa-solid fa-boxes-stacked me-2"></i>
+                    {% if articulo %}Editar Artículo{% else %}Registrar Nuevo Artículo{% endif %}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <ul class="nav nav-tabs mb-4" id="articuloTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">Datos Generales</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="ficha-tab" data-bs-toggle="tab" data-bs-target="#ficha" type="button" role="tab" aria-controls="ficha" aria-selected="false">Ficha Técnica</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock" type="button" role="tab" aria-controls="stock" aria-selected="false">Stock</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="precios-tab" data-bs-toggle="tab" data-bs-target="#precios" type="button" role="tab" aria-controls="precios" aria-selected="false">Precios y Costos</button>
+                    </li>
+                </ul>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="tab-content" id="articuloTabContent">
+                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                            <h5 class="mb-3 mt-2 text-primary"><i class="fa-solid fa-address-card me-2"></i> Datos Generales</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Nombre</label>
+                                    {% render_field form.nombre class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Código</label>
+                                    {% render_field form.codigo class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Tipo</label>
+                                    {% render_field form.tipo class="form-select form-select-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Familia</label>
+                                    {% render_field form.familia class="form-select form-select-lg" %}
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold">Descripción</label>
+                                    {% render_field form.descripcion class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Unidad de Medida</label>
+                                    {% render_field form.unidad_medida class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Activo</label>
+                                    {% render_field form.activo class="form-check-input ms-2" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="ficha" role="tabpanel" aria-labelledby="ficha-tab">
+                            <h5 class="mb-3 mt-2 text-info"><i class="fa-solid fa-file-lines me-2"></i> Ficha Técnica</h5>
+                            {% if ficha_form %}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">SKU</label>
+                                    {% render_field ficha_form.sku class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label fw-bold">Descripción</label>
+                                    {% render_field ficha_form.descripcion class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Unidad de Compra</label>
+                                    {% render_field ficha_form.unidad_compra class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Unidad de Consumo/Venta</label>
+                                    {% render_field ficha_form.unidad_consumo class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Factor de Conversión</label>
+                                    {% render_field ficha_form.factor_conversion class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Talla</label>
+                                    {% render_field ficha_form.talla class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Color</label>
+                                    {% render_field ficha_form.color class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Material</label>
+                                    {% render_field ficha_form.material class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Imagen</label>
+                                    {% render_field ficha_form.imagen class="form-control form-control-lg" %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="stock" role="tabpanel" aria-labelledby="stock-tab">
+                            <h5 class="mb-3 mt-2 text-success"><i class="fa-solid fa-warehouse me-2"></i> Stock</h5>
+                            {% if stock_form %}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Stock Físico</label>
+                                    {% render_field stock_form.fisico class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Stock Comprometido</label>
+                                    {% render_field stock_form.comprometido class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Stock Mínimo</label>
+                                    {% render_field stock_form.minimo class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Stock Máximo</label>
+                                    {% render_field stock_form.maximo class="form-control form-control-lg" %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="precios" role="tabpanel" aria-labelledby="precios-tab">
+                            <h5 class="mb-3 mt-2 text-warning"><i class="fa-solid fa-dollar-sign me-2"></i> Precios y Costos</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Costo Promedio</label>
+                                    {% render_field form.costo_promedio class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Precio Base</label>
+                                    {% render_field form.precio_base class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Precio Mayorista</label>
+                                    {% render_field form.precio_mayorista class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Precio Distribuidor</label>
+                                    {% render_field form.precio_distribuidor class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Tipo de Impuesto</label>
+                                    {% render_field form.tipo_impuesto class="form-select form-select-lg" %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success btn-lg"><i class="fa-solid fa-floppy-disk me-2"></i> Guardar</button>
+                        <a href="{% url 'lista_articulos' %}" class="btn btn-secondary btn-lg ms-2">Volver</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

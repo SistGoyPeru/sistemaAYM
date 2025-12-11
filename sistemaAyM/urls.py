@@ -15,4 +15,5 @@ urlpatterns = [
     path('', root_redirect),
     path('admin/', admin.site.urls),
     path('proveedores/', include('proveedores.urls')),
+    path('inventario/', include('inventario.urls')),
 ]

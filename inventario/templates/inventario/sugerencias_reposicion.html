@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Sugerencias de Reposición</h2>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Artículo</th>
+            <th>Stock Físico</th>
+            <th>Stock Mínimo</th>
+            <th>Proveedor Sugerido</th>
+            <th>Último Costo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for articulo in articulos %}
+        <tr>
+            <td>{{ articulo.nombre }}</td>
+            <td>{{ articulo.stock.fisico }}</td>
+            <td>{{ articulo.stock.minimo }}</td>
+            <td>{% if articulo.proveedores.all %}{{ articulo.proveedores.first.proveedor }}{% else %}-{% endif %}</td>
+            <td>{% if articulo.proveedores.all %}{{ articulo.proveedores.first.ultimo_costo }}{% else %}-{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay artículos bajo el stock mínimo.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

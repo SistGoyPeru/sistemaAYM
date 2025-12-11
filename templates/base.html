@@ -65,6 +65,15 @@
                 <a href="/proveedores/" class="{% if '/proveedores/' in request.path %}active{% endif %}">
                     <span class="icon"><i class="fa-solid fa-mug-hot"></i></span> Proveedores
                 </a>
+                <a href="/inventario/articulos/" class="{% if '/inventario/articulos/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-boxes-stacked"></i></span> Inventario
+                </a>
+                <a href="{% url 'sugerencias_reposicion' %}" class="{% if '/inventario/sugerencias-reposicion/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span> Sugerencias de Reposición
+                </a>
+                <a href="/inventario/familias/" class="{% if '/inventario/familias/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-layer-group"></i></span> Familias
+                </a>
                 <div class="mt-5 text-center">
                     <span class="icon"><i class="fa-solid fa-shirt" style="color:#2196f3;"></i></span>
                     <span class="icon"><i class="fa-solid fa-hat-cowboy" style="color:#ff9800;"></i></span>

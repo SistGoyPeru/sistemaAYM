@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{% if familia %}Editar Familia{% else %}Nueva Familia{% endif %}</h2>
+<form method="post">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+        <div class="mb-2">
+            <label class="form-label fw-bold">{{ field.label }}</label>
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success mt-3">Guardar</button>
+    <a href="{% url 'lista_familias' %}" class="btn btn-secondary mt-3">Volver</a>
+</form>
+{% endblock %}
