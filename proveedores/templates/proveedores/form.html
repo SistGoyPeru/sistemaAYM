@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white" style="background:linear-gradient(90deg,#0d6efd 60%,#ff9800 100%);">
+                <h3 class="mb-0"><i class="fa-solid fa-user-plus me-2"></i> Registrar Nuevo Proveedor</h3>
+            </div>
+            <div class="card-body p-4">
+                <ul class="nav nav-tabs mb-4" id="proveedorTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">Información General</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="financiera-tab" data-bs-toggle="tab" data-bs-target="#financiera" type="button" role="tab" aria-controls="financiera" aria-selected="false">Información Financiera y Legal</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="catalogo-tab" data-bs-toggle="tab" data-bs-target="#catalogo" type="button" role="tab" aria-controls="catalogo" aria-selected="false">Catálogo y Precios</button>
+                    </li>
+                </ul>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="tab-content" id="proveedorTabContent">
+                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                            <h5 class="mb-3 mt-2 text-primary"><i class="fa-solid fa-address-card me-2"></i> Datos Generales</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-building me-1 text-primary"></i> Razón Social</label>
+                                    {% render_field form.razon_social class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-store me-1 text-warning"></i> Nombre Comercial</label>
+                                    {% render_field form.nombre_comercial class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-id-card me-1 text-info"></i> ID Fiscal</label>
+                                    {% render_field form.id_fiscal class="form-control form-control-lg" %}
+                                </div>
+                            </div>
+                            <h5 class="mb-3 mt-2 text-success"><i class="fa-solid fa-phone me-2"></i> Contacto</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-location-dot me-1 text-danger"></i> Dirección Fiscal</label>
+                                    {% render_field form.direccion_fiscal class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-warehouse me-1 text-success"></i> Dirección Almacén</label>
+                                    {% render_field form.direccion_almacen class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-phone me-1 text-primary"></i> Teléfono</label>
+                                    {% render_field form.telefono class="form-control form-control-lg" %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-envelope me-1 text-warning"></i> Email</label>
+                                    {% render_field form.email class="form-control form-control-lg" %}
+                                </div>
+                            </div>
+                            <h5 class="mb-3 mt-2 text-info"><i class="fa-solid fa-toggle-on me-2"></i> Estado</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold"><i class="fa-solid fa-toggle-on me-1 text-info"></i> Estado</label>
+                                    {% render_field form.estado class="form-select form-select-lg" %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="catalogo" role="tabpanel" aria-labelledby="catalogo-tab">
+                            <h5 class="mb-3 mt-2 text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i> Catálogo y Precios</h5>
+                            <div class="mb-4">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nombre Producto</th>
+                                                <th>Código Interno</th>
+                                                <th>Código Proveedor</th>
+                                                <th>Precio Unitario</th>
+                                                <th>Descuento (%)</th>
+                                                <th>Lead Time (días)</th>
+                                                <th>MOQ</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in productos_formset.forms %}
+                                            <tr>
+                                                <td>{% render_field form.nombre class="form-control" %}</td>
+                                                <td>{% render_field form.codigo_interno class="form-control" %}</td>
+                                                <td>{% render_field form.codigo_proveedor class="form-control" %}</td>
+                                                <td>{% render_field form.precio_unitario class="form-control" %}</td>
+                                                <td>{% render_field form.descuento class="form-control" %}</td>
+                                                <td>{% render_field form.lead_time class="form-control" %}</td>
+                                                <td>{% render_field form.moq class="form-control" %}</td>
+                                                <td>{% if productos_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {{ productos_formset.management_form }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="financiera" role="tabpanel" aria-labelledby="financiera-tab">
+                            <h5 class="mb-3 mt-2 text-warning"><i class="fa-solid fa-money-check-dollar me-2"></i> Información Financiera y Legal</h5>
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-primary"><i class="fa-solid fa-university me-1"></i> Datos Bancarios</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Banco</th>
+                                                <th>N° Cuenta</th>
+                                                <th>Tipo</th>
+                                                <th>Titular</th>
+                                                <th>Código Interbancario</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in bancos_formset.forms %}
+                                            <tr>
+                                                <td>{% render_field form.banco class="form-control" %}</td>
+                                                <td>{% render_field form.numero_cuenta class="form-control" %}</td>
+                                                <td>{% render_field form.tipo_cuenta class="form-control" %}</td>
+                                                <td>{% render_field form.titular class="form-control" %}</td>
+                                                <td>{% render_field form.codigo_interbancario class="form-control" %}</td>
+                                                <td>{% if bancos_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {{ bancos_formset.management_form }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-success"><i class="fa-solid fa-file-invoice-dollar me-1"></i> Condiciones de Pago</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Condición</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in pago_formset.forms %}
+                                            <tr>
+                                                <td>{% render_field form.condicion class="form-select" %}</td>
+                                                <td>{% if pago_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {{ pago_formset.management_form }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-info"><i class="fa-solid fa-file-contract me-1"></i> Documentos Legales</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Archivo</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in doc_formset.forms %}
+                                            <tr>
+                                                <td>{% render_field form.nombre class="form-control" %}</td>
+                                                <td>{% render_field form.archivo class="form-control" %}</td>
+                                                <td>{% if doc_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {{ doc_formset.management_form }}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-warning"><i class="fa-solid fa-coins me-1"></i> Monedas</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Moneda</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in moneda_formset.forms %}
+                                            <tr>
+                                                <td>{% render_field form.moneda class="form-control" %}</td>
+                                                <td>{% if moneda_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {{ moneda_formset.management_form }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-lg btn-primary shadow-sm me-2"><i class="fa-solid fa-floppy-disk me-1"></i> Guardar</button>
+                        <a href="{% url 'lista_proveedores' %}" class="btn btn-lg btn-outline-secondary">Volver a la lista</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
