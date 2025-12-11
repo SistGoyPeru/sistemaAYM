@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Órdenes de Compra</h1>
+<form method="get" class="row g-2 mb-3 align-items-end">
+    <div class="col-md-4">
+        <label class="form-label">Buscar</label>
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Código o proveedor...">
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select name="estado" class="form-select">
+            <option value="">Todos</option>
+            <option value="abierta" {% if estado_sel == 'abierta' %}selected{% endif %}>Abierta</option>
+            <option value="cerrada" {% if estado_sel == 'cerrada' %}selected{% endif %}>Cerrada</option>
+            <option value="cancelada" {% if estado_sel == 'cancelada' %}selected{% endif %}>Cancelada</option>
+        </select>
+    </div>
+    <div class="col-md-5 d-flex gap-2">
+        <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+        <button type="submit" name="exportar" value="1" class="btn btn-success"><i class="fa-solid fa-file-excel me-1"></i> Exportar a Excel</button>
+        <a href="{% url 'nueva_orden_compra' %}" class="btn btn-primary">Nueva Orden de Compra</a>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Proveedor</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for orden in ordenes %}
+        <tr>
+            <td>{{ orden.codigo }}</td>
+            <td>{{ orden.proveedor.razon_social }}</td>
+            <td>{{ orden.get_estado_display }}</td>
+            <td>{{ orden.fecha }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center">Sin órdenes registradas</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

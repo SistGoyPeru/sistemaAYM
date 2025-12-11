@@ -102,6 +102,10 @@ class OrdenCompra(models.Model):
     ])
     fecha = models.DateField()
 
+# --- Detalle de Orden de Compra ---
+
+# El modelo DetalleOrdenCompra dependía de inventario.Articulo, se elimina para restaurar solo proveedores.
+
 class FacturaProveedor(models.Model):
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name="facturas")
     numero = models.CharField(max_length=50)

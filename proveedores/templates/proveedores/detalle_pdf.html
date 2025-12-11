@@ -11,24 +11,9 @@
             <p class="mb-1"><strong>Estado:</strong> {{ proveedor.get_estado_display }}</p>
         </div>
     </div>
-    <!-- Filtros de búsqueda -->
-    <form class="row g-3 mb-4" id="filtros-reporte">
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="filtro-scorecard" placeholder="Buscar en Scorecard...">
-        </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="filtro-incidente" placeholder="Buscar en Incidentes...">
-        </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control" id="filtro-transaccion" placeholder="Buscar en Transacciones...">
-        </div>
-        <div class="col-md-3">
-            <button type="button" class="btn btn-outline-secondary w-100" onclick="limpiarFiltros()"><i class="fa-solid fa-eraser me-1"></i> Limpiar Filtros</button>
-        </div>
-    </form>
     <div class="row mb-4">
         <div class="col-md-6">
-            <h4 class="text-success mb-3"><i class="fa-solid fa-star-half-stroke me-2"></i> Scorecard (Calificaciones)</h4>
+            <h4 class="text-success mb-3">Scorecard (Calificaciones)</h4>
             <div class="mb-3">
                 <span class="badge bg-primary fs-6 me-2">Promedio Calidad: {{ avg_calidad|default:'-' }}</span>
                 <span class="badge bg-info text-dark fs-6 me-2">Promedio Puntualidad: {{ avg_puntualidad|default:'-' }}</span>
@@ -45,7 +30,7 @@
                 </thead>
                 <tbody>
                     {% for s in scorecards %}
-                    <tr class="scorecard-row">
+                    <tr>
                         <td>{{ s.fecha }}</td>
                         <td>{{ s.calidad }}</td>
                         <td>{{ s.puntualidad }}</td>
@@ -58,7 +43,7 @@
             </table>
         </div>
         <div class="col-md-6">
-            <h4 class="text-danger mb-3"><i class="fa-solid fa-triangle-exclamation me-2"></i> Incidentes</h4>
+            <h4 class="text-danger mb-3">Incidentes</h4>
             <table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
@@ -68,7 +53,7 @@
                 </thead>
                 <tbody>
                     {% for i in incidentes %}
-                    <tr class="incidente-row">
+                    <tr>
                         <td>{{ i.fecha }}</td>
                         <td>{{ i.descripcion }}</td>
                     </tr>
@@ -81,7 +66,7 @@
     </div>
     <div class="row">
         <div class="col-12 mb-5">
-            <h4 class="text-primary mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i> Historial de Transacciones</h4>
+            <h4 class="text-primary mb-3">Historial de Transacciones</h4>
             <div class="mb-4">
                 <h6 class="fw-bold text-info">Órdenes de Compra</h6>
                 <table class="table table-bordered">
@@ -94,7 +79,7 @@
                     </thead>
                     <tbody>
                         {% for o in ordenes %}
-                        <tr class="transaccion-row">
+                        <tr>
                             <td>{{ o.codigo }}</td>
                             <td>{{ o.get_estado_display }}</td>
                             <td>{{ o.fecha }}</td>
@@ -118,7 +103,7 @@
                     </thead>
                     <tbody>
                         {% for f in facturas %}
-                        <tr class="transaccion-row">
+                        <tr>
                             <td>{{ f.numero }}</td>
                             <td>{{ f.get_estado_display }}</td>
                             <td>{{ f.fecha }}</td>
@@ -142,7 +127,7 @@
                     </thead>
                     <tbody>
                         {% for d in devoluciones %}
-                        <tr class="transaccion-row">
+                        <tr>
                             <td>{{ d.fecha }}</td>
                             <td>{{ d.motivo }}</td>
                             <td>{{ d.nota_credito }}</td>
@@ -153,47 +138,6 @@
                     </tbody>
                 </table>
             </div>
-            <a href="{% url 'exportar_proveedor_excel' proveedor.pk %}" class="btn btn-success me-2"><i class="fa-solid fa-file-excel me-1"></i> Exportar a Excel</a>
-            <a href="{% url 'exportar_proveedor_pdf' proveedor.pk %}" class="btn btn-danger me-2"><i class="fa-solid fa-file-pdf me-1"></i> Exportar a PDF</a>
-            <a href="{% url 'lista_proveedores' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Volver a la lista</a>
-            <a href="{% url 'editar_proveedor' proveedor.pk %}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square me-1"></i> Editar</a>
-        </div>
-    </div>
-</div>
-<script>
-// Filtro Scorecard
-document.getElementById('filtro-scorecard').addEventListener('input', function() {
-    let val = this.value.toLowerCase();
-    document.querySelectorAll('.scorecard-row').forEach(function(row) {
-        let text = row.innerText.toLowerCase();
-        row.style.display = text.includes(val) ? '' : 'none';
-    });
-});
-// Filtro Incidentes
-document.getElementById('filtro-incidente').addEventListener('input', function() {
-    let val = this.value.toLowerCase();
-    document.querySelectorAll('.incidente-row').forEach(function(row) {
-        let text = row.innerText.toLowerCase();
-        row.style.display = text.includes(val) ? '' : 'none';
-    });
-});
-// Filtro Transacciones (ordenes, facturas, devoluciones)
-document.getElementById('filtro-transaccion').addEventListener('input', function() {
-    let val = this.value.toLowerCase();
-    document.querySelectorAll('.transaccion-row').forEach(function(row) {
-        let text = row.innerText.toLowerCase();
-        row.style.display = text.includes(val) ? '' : 'none';
-    });
-});
-function limpiarFiltros() {
-    document.getElementById('filtro-scorecard').value = '';
-    document.getElementById('filtro-incidente').value = '';
-    document.getElementById('filtro-transaccion').value = '';
-    document.querySelectorAll('.scorecard-row, .incidente-row, .transaccion-row').forEach(function(row) {
-        row.style.display = '';
-    });
-}
-</script>
         </div>
     </div>
 </div>

@@ -1,6 +1,8 @@
 import openpyxl
 from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 def exportar_proveedor_excel(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     scorecards = proveedor.scorecards.all().order_by('-fecha')
@@ -27,6 +29,36 @@ def exportar_proveedor_excel(request, pk):
     for s in scorecards:
         ws.append([s.fecha, s.calidad, s.puntualidad, s.cumplimiento])
     ws.append([])
+
+# --- Exportar PDF ---
+from django.shortcuts import get_object_or_404
+def exportar_proveedor_pdf(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    scorecards = proveedor.scorecards.all().order_by('-fecha')
+    incidentes = proveedor.incidentes.all().order_by('-fecha')
+    ordenes = proveedor.ordenes_compra.all().order_by('-fecha')
+    facturas = proveedor.facturas.all().order_by('-fecha')
+    devoluciones = proveedor.devoluciones.all().order_by('-fecha')
+    avg_calidad = round(sum(s.calidad for s in scorecards) / scorecards.count(), 2) if scorecards.exists() else None
+    avg_puntualidad = round(sum(s.puntualidad for s in scorecards) / scorecards.count(), 2) if scorecards.exists() else None
+    avg_cumplimiento = round(sum(s.cumplimiento for s in scorecards) / scorecards.count(), 2) if scorecards.exists() else None
+    template = get_template('proveedores/detalle_pdf.html')
+    html = template.render({
+        'proveedor': proveedor,
+        'scorecards': scorecards,
+        'incidentes': incidentes,
+        'avg_calidad': avg_calidad,
+        'avg_puntualidad': avg_puntualidad,
+        'avg_cumplimiento': avg_cumplimiento,
+        'ordenes': ordenes,
+        'facturas': facturas,
+        'devoluciones': devoluciones,
+        'pdf': True,
+    })
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="proveedor_{proveedor.pk}.pdf"'
+    pisa.CreatePDF(html, dest=response)
+    return response
 
     ws.append(["Incidentes"])
     ws.append(["Fecha", "Descripción"])
@@ -101,17 +133,91 @@ from .models import Proveedor
 from .forms import ProveedorForm, DatosBancariosFormSet, CondicionPagoFormSet, DocumentoLegalFormSet, MonedaFormSet, ProductoProveedorFormSet, IncidenteProveedorFormSet
 
 def lista_proveedores(request):
+    from datetime import date, timedelta
     proveedores = Proveedor.objects.all()
+    q = request.GET.get('q', '').strip()
+    estado_sel = request.GET.get('estado', '')
+    if q:
+        proveedores = proveedores.filter(
+            Q(razon_social__icontains=q) |
+            Q(nombre_comercial__icontains=q) |
+            Q(id_fiscal__icontains=q) |
+            Q(email__icontains=q)
+        )
+    if estado_sel:
+        proveedores = proveedores.filter(estado=estado_sel)
     total = proveedores.count()
     activos = proveedores.filter(estado="activo").count()
     en_prueba = proveedores.filter(estado="en_prueba").count()
     bloqueados = proveedores.filter(estado="bloqueado").count()
+    # Exportar a Excel
+    if 'exportar' in request.GET:
+        import openpyxl
+        from django.http import HttpResponse
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Proveedores"
+        ws.append(["Razón Social", "Nombre Comercial", "ID Fiscal", "Categoría", "Teléfono", "Email", "Estado"])
+        for p in proveedores:
+            ws.append([
+                p.razon_social,
+                p.nombre_comercial,
+                p.id_fiscal,
+                p.categoria,
+                p.telefono,
+                p.email,
+                p.get_estado_display(),
+            ])
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=proveedores.xlsx'
+        wb.save(response)
+        return response
+    if request.GET.get('dashboard') == '1':
+        # Promedios de scorecard por proveedor
+        labels = []
+        calidad = []
+        puntualidad = []
+        cumplimiento = []
+        for p in proveedores:
+            sc = p.scorecards.all()
+            labels.append(p.razon_social)
+            if sc.exists():
+                calidad.append(round(sum(s.calidad for s in sc) / sc.count(), 2))
+                puntualidad.append(round(sum(s.puntualidad for s in sc) / sc.count(), 2))
+                cumplimiento.append(round(sum(s.cumplimiento for s in sc) / sc.count(), 2))
+            else:
+                calidad.append(0)
+                puntualidad.append(0)
+                cumplimiento.append(0)
+        from django.http import JsonResponse
+        return JsonResponse({
+            'labels': labels,
+            'calidad': calidad,
+            'puntualidad': puntualidad,
+            'cumplimiento': cumplimiento,
+        })
+    # Facturas vencidas: estado pendiente y fecha < hoy
+    facturas_vencidas = []
+    for p in proveedores:
+        for f in p.facturas.filter(estado='pendiente', fecha__lt=date.today()):
+            facturas_vencidas.append(f)
+    # Incidentes críticos: incidentes en los últimos 7 días con palabra clave "crítico"
+    incidentes_criticos = []
+    hace_7dias = date.today() - timedelta(days=7)
+    for p in proveedores:
+        for i in p.incidentes.filter(fecha__gte=hace_7dias):
+            if 'criti' in i.descripcion.lower():
+                incidentes_criticos.append(i)
     return render(request, 'proveedores/lista.html', {
         'proveedores': proveedores,
         'total': total,
         'activos': activos,
         'en_prueba': en_prueba,
         'bloqueados': bloqueados,
+        'facturas_vencidas': facturas_vencidas,
+        'incidentes_criticos': incidentes_criticos,
+        'q': q,
+        'estado_sel': estado_sel,
     })
 
 def nuevo_proveedor(request):

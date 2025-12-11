@@ -9,4 +9,5 @@ urlpatterns = [
     path('catalogo/', views.catalogo_productos, name='catalogo_productos'),
     path('detalle/<int:pk>/', views.detalle_proveedor, name='detalle_proveedor'),
     path('exportar_excel/<int:pk>/', views.exportar_proveedor_excel, name='exportar_proveedor_excel'),
+    path('exportar_pdf/<int:pk>/', views.exportar_proveedor_pdf, name='exportar_proveedor_pdf'),
 ]
