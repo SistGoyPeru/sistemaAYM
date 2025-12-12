@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Rechazar Solicitud de Requisición</h2>
+<p>¿Estás seguro que deseas rechazar la solicitud de <b>{{ solicitud.solicitante }}</b> para <b>{{ solicitud.producto }}</b> x <b>{{ solicitud.cantidad }}</b>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Rechazar</button>
+    <a href="{% url 'solicitud_requisicion_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

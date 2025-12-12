@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Detalle de Factura de Proveedor</h2>
+<p><strong>Factura #{{ factura.numero_factura }}</strong> - OC #{{ factura.orden.id }}<br>
+Proveedor: {{ factura.orden.proveedor.nombre }}<br>
+Fecha emisión: {{ factura.fecha_emision }}<br>
+Monto: ${{ factura.monto_factura }}<br>
+Estado: {% if factura.validada %}Validada{% else %}Pendiente{% endif %}</p>
+<a href="{% url 'factura_proveedor_list' factura.orden.id %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

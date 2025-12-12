@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Historial de Costos por Producto</h2>
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="producto">Producto:</label>
+            <input type="text" name="producto" id="producto" class="form-control" value="{{ request.GET.producto|default:'' }}" placeholder="Nombre o código">
+        </div>
+        <div class="col-md-3">
+            <label for="proveedor">Proveedor:</label>
+            <input type="text" name="proveedor" id="proveedor" class="form-control" value="{{ request.GET.proveedor|default:'' }}" placeholder="Nombre proveedor">
+        </div>
+        <div class="col-md-3">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </div>
+</form>
+<table class="table table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Proveedor</th>
+            <th>Costo Unitario</th>
+            <th>Orden de Compra</th>
+            <th>Factura</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in historial %}
+        <tr>
+            <td>{{ item.fecha }}</td>
+            <td>{{ item.producto }}</td>
+            <td>{{ item.proveedor }}</td>
+            <td>${{ item.costo_unitario }}</td>
+            <td>OC #{{ item.orden_id }}</td>
+            <td>{% if item.factura %}{{ item.factura }}{% else %}-{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

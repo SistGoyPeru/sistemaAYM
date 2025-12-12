@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Reporte de Recepciones de Mercancía</h2>
+<form method="get" class="mb-3">
+    <label>Desde: <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}"></label>
+    <label>Hasta: <input type="date" name="fecha_fin" value="{{ fecha_fin }}"></label>
+    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+    <a href="{% url 'exportar_recepciones_csv' %}?fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" class="btn btn-success btn-sm">Exportar a Excel</a>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Orden</th>
+            <th>Fecha Recepción</th>
+            <th>Usuario</th>
+            <th>Observaciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in recepciones %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.orden.id }}</td>
+            <td>{{ r.fecha_recepcion }}</td>
+            <td>{{ r.usuario }}</td>
+            <td>{{ r.observaciones }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

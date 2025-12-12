@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Autorización de Orden de Compra #{{ orden.id }}</h2>
+<p><strong>Proveedor:</strong> {{ orden.proveedor }}</p>
+<p><strong>Total:</strong> ${{ orden.total }}</p>
+<p><strong>Estado actual:</strong> {{ orden.get_estado_display }}</p>
+
+<h4>Historial de Autorizaciones</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nivel</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Comentario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in autorizaciones %}
+        <tr {% if not a.autorizado and a.autorizado is not None %}class="table-danger"{% elif a.autorizado %}class="table-success"{% endif %}>
+            <td>{{ a.nivel }}</td>
+            <td>{{ a.responsable.get_full_name|default:a.responsable.username }}</td>
+            <td>
+                {% if a.autorizado is None %}Pendiente{% elif a.autorizado %}Autorizada{% else %}Rechazada{% endif %}
+            </td>
+            <td>{{ a.fecha|date:"d/m/Y H:i" }}</td>
+            <td>{{ a.comentario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if puede_autorizar and pendiente %}
+<h4>Tu autorización (Nivel {{ pendiente.nivel }})</h4>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="comentario">Comentario:</label>
+        <textarea name="comentario" id="comentario" class="form-control"></textarea>
+    </div>
+    <button type="submit" name="accion" value="autorizar" class="btn btn-success">Autorizar</button>
+    <button type="submit" name="accion" value="rechazar" class="btn btn-danger">Rechazar</button>
+</form>
+{% elif not pendiente %}
+<div class="alert alert-info">Todas las autorizaciones han sido completadas.</div>
+{% endif %}
+<a href="{% url 'orden_compra_detail' orden.id %}" class="btn btn-secondary mt-3">Volver a la OC</a>
+{% endblock %}

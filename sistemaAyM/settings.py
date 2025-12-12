@@ -1,3 +1,5 @@
+# Redirección de login para vistas protegidas
+LOGIN_URL = '/admin/login/'
 """
 Archivo de configuración principal para el proyecto Django sistemaAyM.
 """
@@ -22,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'proveedores',
     'inventario',
+    'compras',
     'widget_tweaks',
 ]
 

@@ -20,7 +20,29 @@
                     </li>
                 </ul>
                 <form method="post" enctype="multipart/form-data">
+                    {% if form.errors or bancos_formset.errors or pago_formset.errors or doc_formset.errors or moneda_formset.errors or productos_formset.errors or incidente_formset.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Corrige los siguientes errores para poder guardar:</strong>
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li><b>{{ field.label }}:</b> {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                                {% for fs in bancos_formset.forms %}{% for error in fs.non_field_errors %}<li>Bancos: {{ error }}</li>{% endfor %}{% endfor %}
+                                {% for fs in pago_formset.forms %}{% for error in fs.non_field_errors %}<li>Condiciones de Pago: {{ error }}</li>{% endfor %}{% endfor %}
+                                {% for fs in doc_formset.forms %}{% for error in fs.non_field_errors %}<li>Documentos: {{ error }}</li>{% endfor %}{% endfor %}
+                                {% for fs in moneda_formset.forms %}{% for error in fs.non_field_errors %}<li>Monedas: {{ error }}</li>{% endfor %}{% endfor %}
+                                {% for fs in productos_formset.forms %}{% for error in fs.non_field_errors %}<li>Productos: {{ error }}</li>{% endfor %}{% endfor %}
+                                {% for fs in incidente_formset.forms %}{% for error in fs.non_field_errors %}<li>Incidentes: {{ error }}</li>{% endfor %}{% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                     {% csrf_token %}
+                    {{ incidente_formset.management_form }}
                     <div class="tab-content" id="proveedorTabContent">
                         <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
                             <h5 class="mb-3 mt-2 text-primary"><i class="fa-solid fa-address-card me-2"></i> Datos Generales</h5>
@@ -102,6 +124,27 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="financiera" role="tabpanel" aria-labelledby="financiera-tab">
+                                                    <div class="mb-4">
+                                                        <h6 class="fw-bold text-danger"><i class="fa-solid fa-triangle-exclamation me-1"></i> Incidentes</h6>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered align-middle">
+                                                                <thead class="table-light">
+                                                                    <tr>
+                                                                        <th>Descripción</th>
+                                                                        <th>Eliminar</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for form in incidente_formset.forms %}
+                                                                    <tr>
+                                                                        <td>{% render_field form.descripcion class="form-control" %}</td>
+                                                                        <td>{% if incidente_formset.can_delete %}{% render_field form.DELETE class="form-check-input" %}{% endif %}</td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                             <h5 class="mb-3 mt-2 text-warning"><i class="fa-solid fa-money-check-dollar me-2"></i> Información Financiera y Legal</h5>
                             <div class="mb-4">
                                 <h6 class="fw-bold text-primary"><i class="fa-solid fa-university me-1"></i> Datos Bancarios</h6>
@@ -203,6 +246,8 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Management form para incidentes (imprescindible para el guardado correcto) -->
+                    {{ incidente_formset.management_form }}
                     <div class="mt-4 d-flex justify-content-end">
                         <button type="submit" class="btn btn-lg btn-primary shadow-sm me-2"><i class="fa-solid fa-floppy-disk me-1"></i> Guardar</button>
                         <a href="{% url 'lista_proveedores' %}" class="btn btn-lg btn-outline-secondary">Volver a la lista</a>

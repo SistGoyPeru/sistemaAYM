@@ -16,6 +16,10 @@ class Proveedor(models.Model):
         ("bloqueado", "Bloqueado"),
         ("en_prueba", "En prueba")
     ], default="activo")
+    logo = models.ImageField(upload_to="proveedores/logos/", blank=True, null=True, verbose_name="Logo")
+    rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, verbose_name="Rating (1-5)")
+    from django.utils import timezone
+    fecha_alta = models.DateField(default=timezone.now, verbose_name="Fecha de alta")
 
     def __str__(self):
         return self.razon_social
@@ -92,15 +96,6 @@ class IncidenteProveedor(models.Model):
     descripcion = models.TextField()
 
 # --- Historial de Transacciones ---
-class OrdenCompra(models.Model):
-    proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name="ordenes_compra")
-    codigo = models.CharField(max_length=50)
-    estado = models.CharField(max_length=20, choices=[
-        ("abierta", "Abierta"),
-        ("cerrada", "Cerrada"),
-        ("cancelada", "Cancelada")
-    ])
-    fecha = models.DateField()
 
 # --- Detalle de Orden de Compra ---
 

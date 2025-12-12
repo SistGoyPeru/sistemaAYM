@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Reporte de Órdenes de Compra</h2>
+<form method="get" class="mb-3">
+    <label>Desde: <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}"></label>
+    <label>Hasta: <input type="date" name="fecha_fin" value="{{ fecha_fin }}"></label>
+    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+    <a href="{% url 'exportar_ordenes_compra_csv' %}?fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" class="btn btn-success btn-sm">Exportar a Excel</a>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Proveedor</th>
+            <th>Fecha Emisión</th>
+            <th>Total</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in ordenes %}
+        <tr>
+            <td>{{ o.id }}</td>
+            <td>{{ o.proveedor }}</td>
+            <td>{{ o.fecha_emision }}</td>
+            <td>{{ o.total }}</td>
+            <td>{{ o.get_estado_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

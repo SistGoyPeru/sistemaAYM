@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Detalle de Orden de Compra</h2>
+<table class="table table-bordered">
+    <tr><th>ID</th><td>{{ orden.id }}</td></tr>
+    <tr><th>Proveedor</th><td>{{ orden.proveedor }}</td></tr>
+    <tr><th>Fecha Emisión</th><td>{{ orden.fecha_emision }}</td></tr>
+    <tr><th>Fecha Entrega Esperada</th><td>{{ orden.fecha_entrega_esperada }}</td></tr>
+    <tr><th>Almacén Destino</th><td>{{ orden.almacen_destino }}</td></tr>
+    <tr><th>Condiciones de Pago</th><td>{{ orden.condiciones_pago }}</td></tr>
+    <tr><th>Moneda</th><td>{{ orden.moneda }}</td></tr>
+    <tr><th>Estado</th><td>{{ orden.get_estado_display }}</td></tr>
+    <tr>
+        <th>Cambiar Estado</th>
+        <td>
+            {% for key, value in orden.ESTADO_CHOICES %}
+                {% if orden.estado != key %}
+                    <a href="{% url 'orden_compra_cambiar_estado' orden.id key %}" class="btn btn-outline-primary btn-sm">{{ value }}</a>
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr><th>Observaciones</th><td>{{ orden.observaciones }}</td></tr>
+    <tr><th>Subtotal</th><td>{{ orden.subtotal }}</td></tr>
+    <tr><th>Impuestos</th><td>{{ orden.impuestos }}</td></tr>
+    <tr><th>Total</th><td>{{ orden.total }}</td></tr>
+</table>
+<h4>Detalle de Ítems</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Unidad</th>
+            <th>Costo Unitario</th>
+            <th>Impuesto</th>
+            <th>Subtotal</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in orden.detalles.all %}
+        <tr>
+            <td>{{ d.producto }}</td>
+            <td>{{ d.cantidad }}</td>
+            <td>{{ d.unidad_medida }}</td>
+            <td>{{ d.costo_unitario }}</td>
+            <td>{{ d.impuesto }}</td>
+            <td>{{ d.subtotal }}</td>
+            <td>{{ d.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'orden_compra_list' %}" class="btn btn-secondary">Volver</a>
+<a href="{% url 'recepcion_mercancia_create' orden.id %}" class="btn btn-success">Registrar Recepción de Mercancía</a>
+{% if orden.estado == 'pendiente_autorizacion' or orden.estado == 'autorizada' %}
+    <a href="{% url 'orden_compra_autorizar' orden.id %}" class="btn btn-warning">Autorizaciones</a>
+    <div class="mt-3">
+        <label class="form-label">URL para autorizar esta orden:</label>
+        <div class="input-group">
+            <input type="text" class="form-control" readonly value="{{ request.scheme }}://{{ request.get_host }}{% url 'orden_compra_autorizar' orden.id % }">
+            <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value)"><i class="fa-solid fa-copy"></i> Copiar</button>
+        </div>
+        <small class="text-muted">Comparte esta URL solo con usuarios autorizados.</small>
+    </div>
+{% endif %}
+
+<h4>Historial de Autorizaciones</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nivel</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Comentario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in autorizaciones %}
+        <tr {% if not a.autorizado and a.autorizado is not None %}class="table-danger"{% elif a.autorizado %}class="table-success"{% endif %}>
+            <td>{{ a.nivel }}</td>
+            <td>{{ a.responsable.get_full_name|default:a.responsable.username }}</td>
+            <td>
+                {% if a.autorizado is None %}Pendiente{% elif a.autorizado %}Autorizada{% else %}Rechazada{% endif %}
+            </td>
+            <td>{{ a.fecha|date:"d/m/Y H:i" }}</td>
+            <td>{{ a.comentario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

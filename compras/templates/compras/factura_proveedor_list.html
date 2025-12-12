@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Facturas de Proveedor para OC #{{ orden.id }}</h2>
+<a href="{% url 'factura_proveedor_create' orden.id %}" class="btn btn-primary mb-2">Registrar nueva factura</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Archivo</th>
+            <th>Validada</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for f in facturas %}
+        <tr>
+            <td>{{ f.numero_factura }}</td>
+            <td>{{ f.fecha_emision }}</td>
+            <td>{{ f.monto_factura }}</td>
+            <td>{% if f.archivo %}<a href="{{ f.archivo.url }}" target="_blank">Ver</a>{% endif %}</td>
+            <td>{% if f.validada %}Sí{% else %}No{% endif %}</td>
+            <td>
+                {% if not f.validada %}
+                <a href="{% url 'factura_proveedor_validar' f.id %}" class="btn btn-success btn-sm">Validar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'orden_compra_detail' orden.id %}" class="btn btn-secondary">Volver a la orden</a>
+{% endblock %}

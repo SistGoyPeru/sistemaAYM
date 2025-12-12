@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Proveedor, ContactoProveedor, DatosBancarios, CondicionPago, DocumentoLegal, Moneda,
     ProductoProveedor, HistorialPrecio, ScorecardProveedor, IncidenteProveedor,
-    OrdenCompra, FacturaProveedor, DevolucionProveedor
+    FacturaProveedor, DevolucionProveedor
 )
 
 
@@ -45,10 +45,6 @@ class ScorecardProveedorAdmin(admin.ModelAdmin):
 @admin.register(IncidenteProveedor)
 class IncidenteProveedorAdmin(admin.ModelAdmin):
     list_display = ('proveedor', 'fecha', 'descripcion')
-
-@admin.register(OrdenCompra)
-class OrdenCompraAdmin(admin.ModelAdmin):
-    list_display = ('proveedor', 'codigo', 'estado', 'fecha')
 
 @admin.register(FacturaProveedor)
 class FacturaProveedorAdmin(admin.ModelAdmin):

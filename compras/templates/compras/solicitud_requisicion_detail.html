@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Detalle de Solicitud de Requisición</h2>
+<table class="table table-bordered">
+    <tr><th>ID</th><td>{{ solicitud.id }}</td></tr>
+    <tr><th>Fecha</th><td>{{ solicitud.fecha }}</td></tr>
+    <tr><th>Solicitante</th><td>{{ solicitud.solicitante }}</td></tr>
+    <tr><th>Producto</th><td>{{ solicitud.producto }}</td></tr>
+    <tr><th>Cantidad</th><td>{{ solicitud.cantidad }}</td></tr>
+    <tr><th>Prioridad</th><td>{{ solicitud.get_prioridad_display }}</td></tr>
+    <tr><th>Estado</th><td>{{ solicitud.get_estado_display }}</td></tr>
+    <tr><th>Observaciones</th><td>{{ solicitud.observaciones }}</td></tr>
+</table>
+<a href="{% url 'solicitud_requisicion_list' %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

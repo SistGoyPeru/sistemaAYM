@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<h2>Nueva Orden de Compra</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Proveedor</label>
+            {% render_field form.proveedor class="form-select" %}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Fecha de Entrega Esperada</label>
+            {% render_field form.fecha_entrega_esperada class="form-control" %}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Almacén de Destino</label>
+            {% render_field form.almacen_destino class="form-select" %}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Condiciones de Pago</label>
+            {% render_field form.condiciones_pago class="form-control" %}
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Moneda</label>
+            {% render_field form.moneda class="form-control" %}
+        </div>
+        <div class="col-md-12">
+            <label class="form-label fw-bold">Observaciones</label>
+            {% render_field form.observaciones class="form-control" %}
+        </div>
+    </div>
+    <h4>Detalle de Ítems</h4>
+    {{ formset.management_form }}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Unidad</th>
+                <th>Costo Unitario</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+            <tr>
+                <td>{% render_field form.producto class="form-select" %}</td>
+                <td>{% render_field form.cantidad class="form-control" %}</td>
+                <td>{% render_field form.unidad_medida class="form-control" %}</td>
+                <td>{% render_field form.costo_unitario class="form-control" %}</td>
+                <td>{% if form.instance.pk %}{% render_field form.DELETE %}{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'orden_compra_list' %}" class="btn btn-secondary">Volver</a>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const proveedorSelect = document.getElementById('id_proveedor');
+    const condicionesPagoInput = document.getElementById('id_condiciones_pago');
+    const monedaInput = document.getElementById('id_moneda');
+    if (proveedorSelect) {
+        proveedorSelect.addEventListener('change', function() {
+            const proveedorId = this.value;
+            if (proveedorId) {
+                fetch(`/compras/ajax/proveedor_info/?proveedor_id=${proveedorId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.condiciones_pago !== undefined && condicionesPagoInput) {
+                            condicionesPagoInput.value = data.condiciones_pago;
+                        }
+                        if (data.moneda !== undefined && monedaInput) {
+                            monedaInput.value = data.moneda;
+                        }
+                    });
+                // Sugerir último costo en cada fila del formset
+                document.querySelectorAll('tr').forEach(function(row) {
+                    const productoSelect = row.querySelector('select[name$="-producto"]');
+                    const costoInput = row.querySelector('input[name$="-costo_unitario"]');
+                    if (productoSelect && costoInput) {
+                        productoSelect.addEventListener('change', function() {
+                            const productoId = this.value;
+                            if (productoId && proveedorId) {
+                                fetch(`/compras/ajax/sugerir_ultimo_costo/?proveedor_id=${proveedorId}&producto_id=${productoId}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.ultimo_costo !== undefined && data.ultimo_costo !== '') {
+                                            costoInput.value = data.ultimo_costo;
+                                        }
+                                    });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -109,7 +109,7 @@ def detalle_proveedor(request, pk):
         avg_cumplimiento = round(sum(s.cumplimiento for s in scorecards) / scorecards.count(), 2)
     else:
         avg_calidad = avg_puntualidad = avg_cumplimiento = None
-    ordenes = proveedor.ordenes_compra.all().order_by('-fecha')
+    ordenes = proveedor.ordenes_compra.all().order_by('-fecha_emision')
     facturas = proveedor.facturas.all().order_by('-fecha')
     devoluciones = proveedor.devoluciones.all().order_by('-fecha')
     return render(request, 'proveedores/detalle.html', {
@@ -208,6 +208,7 @@ def lista_proveedores(request):
         for i in p.incidentes.filter(fecha__gte=hace_7dias):
             if 'criti' in i.descripcion.lower():
                 incidentes_criticos.append(i)
+    estrellas = [1, 2, 3, 4, 5]
     return render(request, 'proveedores/lista.html', {
         'proveedores': proveedores,
         'total': total,
@@ -218,11 +219,12 @@ def lista_proveedores(request):
         'incidentes_criticos': incidentes_criticos,
         'q': q,
         'estado_sel': estado_sel,
+        'estrellas': estrellas,
     })
 
 def nuevo_proveedor(request):
     if request.method == 'POST':
-        form = ProveedorForm(request.POST)
+        form = ProveedorForm(request.POST, request.FILES)
         proveedor = None
         if form.is_valid():
             proveedor = form.save(commit=False)
@@ -269,7 +271,7 @@ def nuevo_proveedor(request):
 def editar_proveedor(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     if request.method == 'POST':
-        form = ProveedorForm(request.POST, instance=proveedor)
+        form = ProveedorForm(request.POST, request.FILES, instance=proveedor)
         bancos_formset = DatosBancariosFormSet(request.POST, request.FILES, instance=proveedor)
         pago_formset = CondicionPagoFormSet(request.POST, instance=proveedor)
         doc_formset = DocumentoLegalFormSet(request.POST, request.FILES, instance=proveedor)

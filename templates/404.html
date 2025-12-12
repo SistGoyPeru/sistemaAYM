@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Error 404 - Página no encontrada</h2>
+<p>La página que buscas no existe o ha sido movida.</p>
+{% if request.path == '/compras/ordenes/autorizar/' %}
+<div class="alert alert-warning mt-3">
+	<i class="fa-solid fa-circle-exclamation me-2"></i>
+	<strong>Advertencia:</strong> Para autorizar una orden de compra, accede siempre desde el botón "Autorizar" de la lista o el detalle de la orden. La URL debe incluir el número de orden, por ejemplo: <code>/compras/ordenes/7/autorizar/</code>.
+</div>
+{% endif %}
+<a href="/" class="btn btn-primary">Ir al inicio</a>
+{% endblock %}

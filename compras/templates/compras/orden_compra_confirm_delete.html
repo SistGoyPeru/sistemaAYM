@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>¿Estás seguro que deseas eliminar esta Orden de Compra?</h2>
+<p><strong>OC #{{ orden.id }}</strong> - {{ orden.proveedor.nombre }}<br>
+Fecha: {{ orden.fecha_emision }}<br>
+Total: ${{ orden.total }}</p>
+<form method="post">{% csrf_token %}
+    <a href="{% url 'orden_compra_list' %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>
+{% endblock %}

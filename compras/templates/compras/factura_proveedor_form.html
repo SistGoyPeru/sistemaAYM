@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registrar Factura de Proveedor para OC #{{ orden.id }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar Factura</button>
+    <a href="{% url 'factura_proveedor_list' orden.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

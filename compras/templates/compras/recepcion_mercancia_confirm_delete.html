@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>¿Estás seguro que deseas eliminar esta Recepción de Mercancía?</h2>
+<p><strong>Recepción OC #{{ recepcion.orden.id }}</strong><br>
+Proveedor: {{ recepcion.orden.proveedor.nombre }}<br>
+Fecha: {{ recepcion.fecha_recepcion }}</p>
+<form method="post">{% csrf_token %}
+    <a href="{% url 'orden_compra_detail' recepcion.orden.id %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>
+{% endblock %}

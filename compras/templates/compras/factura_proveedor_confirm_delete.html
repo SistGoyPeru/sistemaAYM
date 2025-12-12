@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>¿Estás seguro que deseas eliminar esta Factura de Proveedor?</h2>
+<p><strong>Factura #{{ factura.numero_factura }}</strong> - OC #{{ factura.orden.id }}<br>
+Proveedor: {{ factura.orden.proveedor.nombre }}<br>
+Monto: ${{ factura.monto_factura }}</p>
+<form method="post">{% csrf_token %}
+    <a href="{% url 'factura_proveedor_list' factura.orden.id %}" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>
+{% endblock %}

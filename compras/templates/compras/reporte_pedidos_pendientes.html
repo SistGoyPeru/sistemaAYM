@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Pedidos Pendientes y Compras por Proveedor</h2>
+<form method="get" class="mb-3" id="filtros-form">
+    <div class="row">
+        <div class="col-md-6">
+            <label for="proveedor">Proveedor:</label>
+            <input type="text" name="proveedor" id="proveedor" class="form-control" value="{{ request.GET.proveedor|default:'' }}" placeholder="Nombre proveedor">
+        </div>
+        <div class="col-md-3">
+            <label for="estado">Estado OC:</label>
+            <select name="estado" id="estado" class="form-control">
+                <option value="">Todos</option>
+                <option value="borrador" {% if request.GET.estado == 'borrador' %}selected{% endif %}>Borrador</option>
+                <option value="enviada" {% if request.GET.estado == 'enviada' %}selected{% endif %}>Enviada/Confirmada</option>
+                <option value="recibida_parcial" {% if request.GET.estado == 'recibida_parcial' %}selected{% endif %}>Recibida Parcial</option>
+                <option value="recibida_total" {% if request.GET.estado == 'recibida_total' %}selected{% endif %}>Recibida Total</option>
+                <option value="cancelada" {% if request.GET.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+    </div>
+</form>
+<form method="get" action="{% url 'exportar_pedidos_pendientes_csv' %}" id="exportar-form">
+    <input type="hidden" name="proveedor" value="{{ request.GET.proveedor|default:'' }}">
+    <input type="hidden" name="estado" value="{{ request.GET.estado|default:'' }}">
+    <button type="submit" class="btn btn-success mb-3">Exportar a CSV</button>
+</form>
+<h4>Pedidos Pendientes</h4>
+<table class="table table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Proveedor</th>
+            <th>OC</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for oc in pendientes %}
+        <tr>
+            <td>{{ oc.proveedor.nombre }}</td>
+            <td>OC #{{ oc.id }}</td>
+            <td>{{ oc.fecha_emision }}</td>
+            <td>{{ oc.get_estado_display }}</td>
+            <td>${{ oc.total }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay pedidos pendientes.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h4>Compras por Proveedor</h4>
+<table class="table table-bordered table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Proveedor</th>
+            <th>Total Comprado</th>
+            <th>Cantidad de OCs</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in compras %}
+        <tr>
+            <td>{{ item.proveedor__nombre }}</td>
+            <td>${{ item.total_comprado }}</td>
+            <td>{{ item.num_ocs }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No hay compras registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

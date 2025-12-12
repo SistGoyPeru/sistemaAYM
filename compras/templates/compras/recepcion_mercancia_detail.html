@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Detalle de Recepción de Mercancía</h2>
+<p><strong>Recepción OC #{{ recepcion.orden.id }}</strong><br>
+Proveedor: {{ recepcion.orden.proveedor.nombre }}<br>
+Fecha: {{ recepcion.fecha_recepcion }}</p>
+<h4>Productos Recibidos</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cantidad Recibida</th>
+            <th>Cantidad Dañada</th>
+            <th>Unidad</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in recepcion.detalles.all %}
+        <tr>
+            <td>{{ d.producto.nombre }}</td>
+            <td>{{ d.cantidad_recibida }}</td>
+            <td>{{ d.cantidad_danada }}</td>
+            <td>{{ d.unidad_medida }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'orden_compra_detail' recepcion.orden.id %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

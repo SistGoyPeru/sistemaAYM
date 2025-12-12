@@ -62,6 +62,9 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" alt="Logo" class="logo-img">
                     <h2 class="fw-bold" style="letter-spacing:2px;">AyM Shop</h2>
                 </div>
+                <a href="/dashboard/" class="{% if '/dashboard/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-chart-pie"></i></span> Dashboard
+                </a>
                 <a href="/proveedores/" class="{% if '/proveedores/' in request.path %}active{% endif %}">
                     <span class="icon"><i class="fa-solid fa-mug-hot"></i></span> Proveedores
                 </a>
@@ -73,6 +76,30 @@
                 </a>
                 <a href="/inventario/familias/" class="{% if '/inventario/familias/' in request.path %}active{% endif %}">
                     <span class="icon"><i class="fa-solid fa-layer-group"></i></span> Familias
+                </a>
+                <a href="/compras/requisiciones/" class="{% if '/compras/requisiciones/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-file-lines"></i></span> Requisiciones
+                </a>
+                <a href="/compras/ordenes/" class="{% if '/compras/ordenes/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-file-invoice-dollar"></i></span> Órdenes de Compra
+                </a>
+                <a href="/compras/ordenes/nueva/" class="{% if '/compras/ordenes/nueva/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-plus"></i></span> Nueva OC
+                </a>
+                <a href="/compras/reportes/ordenes/" class="{% if '/compras/reportes/ordenes/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-table-list"></i></span> Reporte de OCs
+                </a>
+                <a href="/compras/reportes/pedidos_pendientes/" class="{% if '/compras/reportes/pedidos_pendientes/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-clock"></i></span> Pedidos Pendientes
+                </a>
+                <a href="/compras/reportes/historial_costos/" class="{% if '/compras/reportes/historial_costos/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-money-bill-trend-up"></i></span> Historial de Costos
+                </a>
+                <a href="/compras/reportes/recepciones/" class="{% if '/compras/reportes/recepciones/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-truck-ramp-box"></i></span> Recepciones
+                </a>
+                <a href="/compras/ordenes/autorizar/" class="{% if '/compras/ordenes/autorizar/' in request.path %}active{% endif %}">
+                    <span class="icon"><i class="fa-solid fa-user-check"></i></span> Autorizar OCs
                 </a>
                 <div class="mt-5 text-center">
                     <span class="icon"><i class="fa-solid fa-shirt" style="color:#2196f3;"></i></span>

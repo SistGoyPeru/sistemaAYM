@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Dashboard de Compras y Proveedores</h2>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(135deg,#2196f3 60%,#21cbf3 100%); color:#fff;">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase">Total Compras Año</h6>
+                <div class="display-5 fw-bold">${{ total_compras }}</div>
+                <i class="fa-solid fa-sack-dollar fa-2x float-end"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(135deg,#ff9800 60%,#ffc107 100%); color:#fff;">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase">Órdenes Pendientes</h6>
+                <div class="display-5 fw-bold">{{ ordenes_pendientes }}</div>
+                <i class="fa-solid fa-clock fa-2x float-end"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(135deg,#43a047 60%,#aee571 100%); color:#fff;">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase">Cumplimiento Entregas</h6>
+                <div class="display-5 fw-bold">{{ cumplimiento_entregas }}%</div>
+                <i class="fa-solid fa-truck-fast fa-2x float-end"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 mb-3" style="background: linear-gradient(135deg,#00bcd4 60%,#8bc34a 100%); color:#fff;">
+            <div class="card-body">
+                <h6 class="card-title text-uppercase">Proveedores Activos</h6>
+                <div class="display-5 fw-bold">{{ proveedores_activos }}</div>
+                <i class="fa-solid fa-users fa-2x float-end"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Distribución de Proveedores por Estado</div>
+            <div class="card-body">
+                <canvas id="proveedorEstadoChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Top 5 Proveedores por Scorecard</div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead><tr><th>Proveedor</th><th>Scorecard</th></tr></thead>
+                    <tbody>
+                        {% for p, s in top_proveedores %}
+                        <tr><td>{{ p }}</td><td><span class="badge bg-success fs-6">{{ s }}</span></td></tr>
+                        {% empty %}
+                        <tr><td colspan="2">Sin datos</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Compras por Mes</div>
+            <div class="card-body">
+                <canvas id="comprasMesChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-bold">Desempeño Promedio Proveedores</div>
+            <div class="card-body">
+                <canvas id="desempenoProveedoresChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-danger text-white fw-bold">Alertas</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    {% for alerta in alertas %}
+                    <li>{{ alerta }}</li>
+                    {% empty %}
+                    <li>No hay alertas críticas.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Gráfica de compras por mes
+var ctx1 = document.getElementById('comprasMesChart').getContext('2d');
+var comprasMesChart = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: {{ compras_meses_labels|safe }},
+        datasets: [{
+            label: 'Compras por Mes',
+            data: {{ compras_meses_data|safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+        }]
+    }
+});
+// Gráfica de desempeño proveedores
+var ctx2 = document.getElementById('desempenoProveedoresChart').getContext('2d');
+var desempenoProveedoresChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: {{ proveedores_labels|safe }},
+        datasets: [{
+            label: 'Scorecard Promedio',
+            data: {{ proveedores_scores|safe }},
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+        }]
+    }
+});
+// Gráfica de torta de estados de proveedores
+var ctx3 = document.getElementById('proveedorEstadoChart').getContext('2d');
+var proveedorEstadoChart = new Chart(ctx3, {
+    type: 'doughnut',
+    data: {
+        labels: {{ proveedores_estado_labels|safe }},
+        datasets: [{
+            data: {{ proveedores_estado_data|safe }},
+            backgroundColor: [
+                '#43a047', '#ff9800', '#e91e63', '#607d8b'
+            ]
+        }]
+    },
+    options: {
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+</script>
+{% endblock %}

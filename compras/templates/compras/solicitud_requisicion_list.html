@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Solicitudes de Requisición</h2>
+<a href="{% url 'solicitud_requisicion_create' %}" class="btn btn-primary mb-3">Nueva Solicitud</a>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Solicitante</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in solicitudes %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td>{{ s.fecha }}</td>
+            <td>{{ s.solicitante }}</td>
+            <td>{{ s.producto }}</td>
+            <td>{{ s.cantidad }}</td>
+            <td>{{ s.get_prioridad_display }}</td>
+            <td>{{ s.get_estado_display }}</td>
+            <td>
+                <a href="{% url 'solicitud_requisicion_detail' s.id %}" class="btn btn-sm btn-info">Ver</a>
+                {% if s.estado == 'pendiente' %}
+                    <a href="{% url 'solicitud_requisicion_aprobar' s.id %}" class="btn btn-sm btn-success">Aprobar</a>
+                    <a href="{% url 'solicitud_requisicion_rechazar' s.id %}" class="btn btn-sm btn-danger">Rechazar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8">No hay solicitudes registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

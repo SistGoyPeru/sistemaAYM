@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Órdenes de Compra</h2>
+<a href="{% url 'orden_compra_create' %}" class="btn btn-primary mb-3">Nueva Orden de Compra</a>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Proveedor</th>
+            <th>Fecha Emisión</th>
+            <th>Almacén Destino</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for oc in ordenes %}
+        <tr>
+            <td>{{ oc.id }}</td>
+            <td>{{ oc.proveedor }}</td>
+            <td>{{ oc.fecha_emision }}</td>
+            <td>{{ oc.almacen_destino }}</td>
+            <td>{{ oc.get_estado_display }}</td>
+            <td>{{ oc.total }}</td>
+            <td>
+                <a href="{% url 'orden_compra_detail' oc.id %}" class="btn btn-sm btn-info">Ver</a>
+                {% if oc.estado == 'pendiente_autorizacion' %}
+                    <a href="{% url 'orden_compra_autorizar' oc.id %}" class="btn btn-sm btn-warning ms-1">Autorizar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No hay órdenes registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

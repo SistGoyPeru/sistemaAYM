@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Validar Factura {{ factura.numero_factura }}</h2>
+<p><strong>Orden de Compra:</strong> {{ factura.orden.id }}</p>
+<p><strong>Monto:</strong> {{ factura.monto_factura }}</p>
+<p><strong>Fecha:</strong> {{ factura.fecha_emision }}</p>
+<form method="post">
+    {% csrf_token %}
+    {% if alerta %}
+        <div class="alert alert-warning">{{ alerta }}</div>
+        <button type="submit" name="autorizar" value="1" class="btn btn-danger">Autorizar Diferencia y Validar</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Validar Factura</button>
+    {% endif %}
+    <a href="{% url 'factura_proveedor_list' factura.orden.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

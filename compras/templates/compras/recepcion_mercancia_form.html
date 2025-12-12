@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registrar Recepción de Mercancía para OC #{{ orden.id }}</h2>
+<p><strong>Proveedor:</strong> {{ orden.proveedor }}<br>
+<strong>Almacén Destino:</strong> {{ orden.almacen_destino }}<br>
+<strong>Fecha Emisión OC:</strong> {{ orden.fecha_emision }}<br>
+<strong>Fecha Esperada:</strong> {{ orden.fecha_entrega_esperada }}</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <h4>Detalle de Recepción</h4>
+    {{ formset.management_form }}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad Recibida</th>
+                <th>Cantidad Dañada</th>
+                <th>Unidad</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for f in formset %}
+            <tr>
+                <td>{{ f.producto }}</td>
+                <td>{{ f.cantidad_recibida }}</td>
+                <td>{{ f.cantidad_danada }}</td>
+                <td>{{ f.unidad_medida }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Registrar Recepción</button>
+    <a href="{% url 'orden_compra_detail' orden.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

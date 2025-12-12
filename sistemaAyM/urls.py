@@ -11,9 +11,13 @@ from django.shortcuts import redirect
 def root_redirect(request):
     return redirect('/proveedores/')
 
+from compras.views import dashboard
+
 urlpatterns = [
     path('', root_redirect),
+    path('dashboard/', dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
     path('proveedores/', include('proveedores.urls')),
     path('inventario/', include('inventario.urls')),
+    path('compras/', include('compras.urls')),
 ]
